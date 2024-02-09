@@ -1,0 +1,27 @@
+name: Validating Terraform
+run-name: "Validating Terraform"
+
+on:
+  pull_request:
+    types: [opened,synchronize]
+    branches:
+      - 'main'
+
+jobs:
+  validate-terraform:
+
+    name: Validate-terraform
+    runs-on: ubuntu-latest
+
+  steps:
+
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 1.7.x
+
+    - name: Terraform Validate
+      run: terraform validate
