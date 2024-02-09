@@ -23,5 +23,8 @@ jobs:
       with:
         terraform_version: 1.7.x
 
+    - name: Terraform Init
+      run: terraform init    
+    
     - name: Terraform Validate
       run: terraform validate
