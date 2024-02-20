@@ -28,11 +28,24 @@ variable "subnets" {
   default = []
 }
 
+variable "firewall" {
+  description = "A list of objects containing firewall details."
+  type = list(object({
+    name          = string
+    direction     = string
+    source_ranges = set(string)
+    allow = list(object({
+      protocol = string
+      ports    = list(string)
+    }))
+  }))
+}
+
 variable "routes" {
   description = "A list of objects containing route details."
   type = list(object({
-    name            = string
-    dest_range      = string
+    name             = string
+    dest_range       = string
     next_hop_gateway = string
   }))
 }
