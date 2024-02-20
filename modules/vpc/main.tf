@@ -22,3 +22,19 @@ resource "google_compute_route" "routes" {
   next_hop_gateway = each.value.next_hop_gateway
   network          = google_compute_network.vpc_network.name
 }
+
+
+resource "google_compute_firewall" "vpc-firewall" {
+  for_each = { for s in toset(var.firewall) : s.name => s }
+  name    = each.value.name
+  network = google_compute_network.vpc_network.name
+  direction = each.value.direction
+  source_ranges = each.value.source_ranges
+  dynamic "allow" {
+        for_each = each.value.allow
+        content {
+          protocol  = allow.value["protocol"]
+          ports     = allow.value["ports"]
+        }
+  }
+}
