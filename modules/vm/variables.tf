@@ -18,9 +18,14 @@ variable "tags" {
   description = "tags for VM Instance"
 }
 
-variable "image" {
+variable "family" {
   type        = string
-  description = "Image of VM Instance"
+  description = "Image Family of VM Instance"
+}
+
+variable "family_project" {
+  type        = string
+  description = "Project of Image Family of VM Instance"
 }
 
 variable "size" {
