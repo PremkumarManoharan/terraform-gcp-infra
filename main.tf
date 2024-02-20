@@ -11,14 +11,16 @@ module "vpc1" {
 }
 
 module "webapp-vm" {
-  source       = "./modules/vm"
-  image        = var.webapp-vm.image
-  name         = var.webapp-vm.name
-  machine_type = var.webapp-vm.machine_type
-  size         = var.webapp-vm.size
-  subnet       = var.webapp-vm.subnet
-  tags         = var.webapp-vm.tags
-  type         = var.webapp-vm.type
-  zone         = var.webapp-vm.zone
-  network_tier = var.webapp-vm.network_tier
+  depends_on = [ module.vpc1 ]
+  source         = "./modules/vm"
+  family         = var.webapp-vm.family
+  family_project = var.webapp-vm.family_project
+  name           = var.webapp-vm.name
+  machine_type   = var.webapp-vm.machine_type
+  size           = var.webapp-vm.size
+  subnet         = var.webapp-vm.subnet
+  tags           = var.webapp-vm.tags
+  type           = var.webapp-vm.type
+  zone           = var.webapp-vm.zone
+  network_tier   = var.webapp-vm.network_tier
 }

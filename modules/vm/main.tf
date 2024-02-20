@@ -8,7 +8,7 @@ resource "google_compute_instance" "webapp" {
 
   boot_disk {
     initialize_params {
-      image = var.image
+      image = data.google_compute_image.my_image.self_link
       size  = var.size
       type  = var.type
     }
@@ -20,4 +20,9 @@ resource "google_compute_instance" "webapp" {
     }
   }
   
+}
+
+data "google_compute_image" "my_image" {
+  family  = "csye6225-webapp"
+  project = "csye-6225-dev-413816"
 }

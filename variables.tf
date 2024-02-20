@@ -40,14 +40,15 @@ variable "vpcs" {
 
 variable "webapp-vm" {
   type = object({
-    image        = string
-    name         = string
-    machine_type = string
-    size         = number
-    subnet       = string
-    tags         = list(string)
-    type         = string
-    zone         = string
-    network_tier = string
+    family         = string
+    family_project = string
+    name           = string
+    machine_type   = string
+    size           = number
+    subnet         = string
+    tags           = list(string)
+    type           = string
+    zone           = string
+    network_tier   = string
   })
 }
