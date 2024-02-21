@@ -28,9 +28,15 @@ variable "vpcs" {
     }))
     firewall = list(object({
       name          = string
+      priority      = number
       direction     = string
       source_ranges = set(string)
+      target_tags = set(string)
       allow = list(object({
+        protocol = string
+        ports    = list(string)
+      }))
+      deny = list(object({
         protocol = string
         ports    = list(string)
       }))
