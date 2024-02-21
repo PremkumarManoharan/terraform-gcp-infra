@@ -38,8 +38,8 @@ variable "vpcs" {
   }))
 }
 
-variable "webapp-vm" {
-  type = object({
+variable "vms" {
+  type = list(object({
     family         = string
     family_project = string
     name           = string
@@ -50,5 +50,5 @@ variable "webapp-vm" {
     type           = string
     zone           = string
     network_tier   = string
-  })
+  }))
 }
