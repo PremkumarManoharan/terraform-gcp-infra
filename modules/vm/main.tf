@@ -23,6 +23,6 @@ resource "google_compute_instance" "webapp" {
 }
 
 data "google_compute_image" "my_image" {
-  family  = "csye6225-webapp"
-  project = "csye-6225-dev-413816"
+  family  = var.family
+  project = var.family_project
 }
