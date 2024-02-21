@@ -1,4 +1,4 @@
-module "vpc1" {
+module "vpcs" {
   for_each                            = { for s in toset(var.vpcs) : s.vpc_name => s }
   source                              = "./modules/vpc"
   vpc_auto_create_subnetworks         = each.value.vpc_auto_create_subnetworks
@@ -10,17 +10,18 @@ module "vpc1" {
   firewall                            = each.value.firewall
 }
 
-module "webapp-vm" {
-  depends_on = [ module.vpc1 ]
+module "vms" {
+  for_each       = { for s in toset(var.vms) : s.name => s }
+  depends_on     = [ module.vpcs ]
   source         = "./modules/vm"
-  family         = var.webapp-vm.family
-  family_project = var.webapp-vm.family_project
-  name           = var.webapp-vm.name
-  machine_type   = var.webapp-vm.machine_type
-  size           = var.webapp-vm.size
-  subnet         = var.webapp-vm.subnet
-  tags           = var.webapp-vm.tags
-  type           = var.webapp-vm.type
-  zone           = var.webapp-vm.zone
-  network_tier   = var.webapp-vm.network_tier
+  family         = each.value.family
+  family_project = each.value.family_project
+  name           = each.value.name
+  machine_type   = each.value.machine_type
+  size           = each.value.size
+  subnet         = each.value.subnet
+  tags           = each.value.tags
+  type           = each.value.type
+  zone           = each.value.zone
+  network_tier   = each.value.network_tier
 }
