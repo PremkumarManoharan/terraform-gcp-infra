@@ -34,7 +34,13 @@ variable "firewall" {
     name          = string
     direction     = string
     source_ranges = set(string)
+    target_tags = set(string)
+    priority = number
     allow = list(object({
+      protocol = string
+      ports    = list(string)
+    }))
+     deny = list(object({
       protocol = string
       ports    = list(string)
     }))

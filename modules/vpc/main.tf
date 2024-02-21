@@ -30,11 +30,20 @@ resource "google_compute_firewall" "vpc-firewall" {
   network = google_compute_network.vpc_network.name
   direction = each.value.direction
   source_ranges = each.value.source_ranges
+  target_tags = each.value.target_tags
+  priority = each.value.priority
   dynamic "allow" {
         for_each = each.value.allow
         content {
           protocol  = allow.value["protocol"]
           ports     = allow.value["ports"]
+        }
+  }
+  dynamic "deny" {
+        for_each = each.value.deny
+        content {
+          protocol  = deny.value["protocol"]
+          ports     = deny.value["ports"]
         }
   }
 }
