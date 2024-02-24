@@ -38,11 +38,19 @@ variable "vpcs" {
       }))
       deny = list(object({
         protocol = string
-        ports    = list(string)
       }))
     }))
+    psconnect = object({
+    name         = string
+    address_type = string
+    purpose      = string
+    prefix_length      = number
+    })
+    private_vpc_connection_service = string
   }))
+  
 }
+
 
 variable "vms" {
   type = list(object({
@@ -57,4 +65,9 @@ variable "vms" {
     zone           = string
     network_tier   = string
   }))
+}
+
+variable "database" {
+  type = string
+  default = "my-database"
 }

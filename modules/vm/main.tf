@@ -19,6 +19,17 @@ resource "google_compute_instance" "webapp" {
       network_tier = var.network_tier
     }
   }
+
+metadata_startup_script = <<-EOF
+  #!/bin/bash
+  echo "PG_HOST=${var.dbhostname}" > /opt/app/.env
+  echo "PG_USER=${var.dbuser}" >> /opt/app/.env
+  echo "PG_PASSWORD=${var.dbpassword}" >> /opt/app/.env
+  echo "PG_DB=${var.database}" >> /opt/app/.env
+  touch /opt/app/start.txt
+EOF
+
+
   
 }
 
