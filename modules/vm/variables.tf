@@ -47,3 +47,19 @@ variable "network_tier" {
   type        = string
   description = "Network_tier for public Ip"
 }
+variable "dbhostname" {
+  type        = string
+  description = "DB hostname for private connection"
+}
+variable "dbpassword" {
+  type        = string
+  description = "DB hostname for private connection"
+}
+variable "dbuser" {
+  type        = string
+  description = "DB hostname for private connection"
+}
+variable "database" {
+  type        = string
+  description = "DB hostname for private connection"
+}

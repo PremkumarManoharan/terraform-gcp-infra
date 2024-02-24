@@ -42,7 +42,6 @@ variable "firewall" {
     }))
      deny = list(object({
       protocol = string
-      ports    = list(string)
     }))
   }))
 }
@@ -54,4 +53,18 @@ variable "routes" {
     dest_range       = string
     next_hop_gateway = string
   }))
+}
+
+variable "psconnect" {
+  description = "A list of objects containing PRIVATE_SERVICE_CONNECT details."
+  type = object({
+    name         = string
+    address_type = string
+    purpose      = string
+    prefix_length = number
+
+  })
+}
+variable "private_vpc_connection_service" {
+  type = string
 }

@@ -8,6 +8,8 @@ module "vpcs" {
   subnets                             = each.value.subnets
   routes                              = each.value.routes
   firewall                            = each.value.firewall
+  psconnect                           = each.value.psconnect
+  private_vpc_connection_service      = each.value.private_vpc_connection_service
 }
 
 module "vms" {
@@ -24,4 +26,17 @@ module "vms" {
   type           = each.value.type
   zone           = each.value.zone
   network_tier   = each.value.network_tier
+  dbhostname     = module.vpcs["vpc-network"].PrivateIp
+  database       = var.database
+  dbuser         = module.vpcs["vpc-network"].username
+  dbpassword     = module.vpcs["vpc-network"].password
+}
+output "private_ip" {
+  value = module.vpcs["vpc-network"].PrivateIp
+}
+output "username" {
+  value = module.vpcs["vpc-network"].username
+}
+output "password" {
+  value = module.vpcs["vpc-network"].password
 }
