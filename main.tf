@@ -14,10 +14,11 @@ module "vpcs" {
 
 
 module "sql-instance-database" {
-  depends_on     = [ module.vpcs ]
-  source = "./modules/sql_instance"
-  sql_instance = var.sql_instance
-  private_network = module.vpcs["vpc-network"].vpc.self_link
+  for_each        = { for s in toset(var.sql_instance) : s.sql_instance_name => s }
+  depends_on      = [ module.vpcs ]
+  source          = "./modules/sql_instance"
+  sql_instance    = each.value
+  private_network = module.vpcs[each.value.vpc_name].vpc.self_link
 }
 module "vms" {
   for_each       = { for s in toset(var.vms) : s.name => s }
@@ -33,24 +34,8 @@ module "vms" {
   type           = each.value.type
   zone           = each.value.zone
   network_tier   = each.value.network_tier
-  dbhostname     = module.sql-instance-database.PrivateIp
-  database       = var.database
-  dbuser         = module.sql-instance-database.username
-  dbpassword     = module.sql-instance-database.password
-}
-
-
-
-
-output "private_ip" {
-  value = module.sql-instance-database.PrivateIp
-}
-output "username" {
-  value = module.sql-instance-database.username
-}
-output "password" {
-  value = module.sql-instance-database.password
-}
-output "vpc" {
-  value = module.vpcs["vpc-network"].vpc
+  dbhostname     = module.sql-instance-database[each.value.database_instance].PrivateIp
+  database       = each.value.database_name
+  dbuser         = module.sql-instance-database[each.value.database_instance].username
+  dbpassword     = module.sql-instance-database[each.value.database_instance].password
 }

@@ -8,6 +8,7 @@ resource "google_sql_database_instance" "instance" {
 
   settings {
     tier = var.sql_instance.tier
+    edition = var.sql_instance.edition
     availability_type = var.sql_instance.availability_type
     disk_size = var.sql_instance.disk_size
     deletion_protection_enabled = var.sql_instance.deletion_protection_enabled
@@ -24,24 +25,13 @@ resource "google_sql_database" "database" {
   instance = google_sql_database_instance.instance.name
 }
 
-resource "random_string" "random_username" {
-  length  = var.sql_instance.database.username_length
-  special = var.sql_instance.database.username_special
-}
-
 resource "random_string" "random_password" {
    length  = var.sql_instance.database.password_length
   special = var.sql_instance.database.password_special
 }
 
-
-resource "google_sql_user" "users" {
-  name     = "admin"
-  instance = google_sql_database_instance.instance.name
-  password = "admin"
-}
 resource "google_sql_user" "users-1" {
-  name     = random_string.random_username.result
+  name     = var.sql_instance.database.username
   instance = google_sql_database_instance.instance.name
   password = random_string.random_password.result
 }

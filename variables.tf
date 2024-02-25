@@ -54,40 +54,39 @@ variable "vpcs" {
 
 variable "vms" {
   type = list(object({
-    family         = string
-    family_project = string
-    name           = string
-    machine_type   = string
-    size           = number
-    subnet         = string
-    tags           = list(string)
-    type           = string
-    zone           = string
-    network_tier   = string
+    family            = string
+    family_project    = string
+    name              = string
+    machine_type      = string
+    size              = number
+    subnet            = string
+    tags              = list(string)
+    type              = string
+    zone              = string
+    network_tier      = string
+    database_instance = string
+    database_name     = string
   }))
 }
 
-variable "database" {
-  type = string
-  default = "my-database"
-}
 
 variable "sql_instance" {
-  type        = object({
+  type        = list(object({
     sql_instance_name      = string
     database_version       = string
     tier                   = string
     availability_type      = string
     disk_size              = number
     ipv4_enabled           = bool
+    vpc_name               = string
+    edition                = string
     deletion_protection_enabled = bool
     database               = object({
             name = string
-            username_length = number
-            username_special = bool
+            username = string
             password_length = number
             password_special = bool
         })
-  })
+  }))
   description = "Deatils of SQL Instance"
 }

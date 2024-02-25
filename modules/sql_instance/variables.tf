@@ -7,11 +7,12 @@ variable "sql_instance" {
     availability_type      = string
     disk_size              = number
     ipv4_enabled           = bool
+    edition                = string
+    vpc_name               = string
     deletion_protection_enabled = bool
     database               = object({
             name = string
-            username_length = number
-            username_special = bool
+            username = string
             password_length = number
             password_special = bool
         })
