@@ -1,10 +1,10 @@
 
 output "username" {
-  value = random_string.random_username.result
+  value = google_sql_user.users-1.name
 }
 
 output "password" {
-  value = random_string.random_password.result
+  value = google_sql_user.users-1.password
 }
 
 output "PrivateIp" {
