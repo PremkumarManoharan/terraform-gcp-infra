@@ -77,6 +77,7 @@ variable "sql_instance" {
     tier                   = string
     availability_type      = string
     disk_size              = number
+    disk_type              = string
     ipv4_enabled           = bool
     vpc_name               = string
     edition                = string

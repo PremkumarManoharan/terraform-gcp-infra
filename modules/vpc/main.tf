@@ -60,5 +60,5 @@ resource "google_service_networking_connection" "private_vpc_connection" {
   network                 = google_compute_network.vpc_network.id
   service                 = var.private_vpc_connection_service
   reserved_peering_ranges = [google_compute_global_address.vpc-psc.name]
+  deletion_policy         = var.deletion_policy
 }
-

@@ -68,3 +68,7 @@ variable "psconnect" {
 variable "private_vpc_connection_service" {
   type = string
 }
+variable "deletion_policy" {
+  type = string
+  default = "ABANDON"
+}

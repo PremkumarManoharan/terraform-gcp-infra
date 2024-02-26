@@ -4,12 +4,13 @@ variable "sql_instance" {
     sql_instance_name      = string
     database_version       = string
     tier                   = string
-    availability_type      = string
-    disk_size              = number
-    ipv4_enabled           = bool
+    availability_type      = optional(string,"REGIONAL")
+    disk_size              = optional(number,100)
+    disk_type              = optional(string,"PD_SSD")
+    ipv4_enabled           = optional(bool,false)
     edition                = string
     vpc_name               = string
-    deletion_protection_enabled = bool
+    deletion_protection_enabled = optional(bool,false)
     database               = object({
             name = string
             username = string
