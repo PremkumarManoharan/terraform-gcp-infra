@@ -22,11 +22,19 @@ resource "google_compute_instance" "webapp" {
 
 metadata_startup_script = <<-EOF
   #!/bin/bash
-  echo "PG_HOST=${var.dbhostname}" > /opt/app/.env
-  echo "PG_USER=${var.dbuser}" >> /opt/app/.env
-  echo "PG_PASSWORD=${var.dbpassword}" >> /opt/app/.env
-  echo "PG_DB=${var.database}" >> /opt/app/.env
-  touch /opt/app/start.txt
+  ENV_FILE="/opt/app/.env"
+  
+  # Check if .env file already exists
+  if [ ! -f "$ENV_FILE" ]; then
+    # Create .env file
+    cat <<EOL > "$ENV_FILE"
+    PG_HOST=${var.dbhostname}
+    PG_USER=${var.dbuser}
+    PG_PASSWORD=${var.dbpassword}
+    PG_DB=${var.database}
+  EOL
+    touch /opt/app/start.txt
+  fi
 EOF
 
 

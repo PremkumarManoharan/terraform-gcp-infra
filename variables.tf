@@ -38,6 +38,7 @@ variable "vpcs" {
       }))
       deny = list(object({
         protocol = string
+        ports    = list(string)
       }))
     }))
     psconnect = object({
