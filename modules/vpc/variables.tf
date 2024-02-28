@@ -42,6 +42,7 @@ variable "firewall" {
     }))
      deny = list(object({
       protocol = string
+      ports    = list(string)
     }))
   }))
 }

@@ -43,6 +43,7 @@ resource "google_compute_firewall" "vpc-firewall" {
         for_each = each.value.deny
         content {
           protocol  = deny.value["protocol"]
+          ports     = deny.value["ports"]
         }
   }
 }
