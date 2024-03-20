@@ -7,6 +7,10 @@ variable "email" {
   type = string
 }
 
+variable "scopes" {
+  type = list(string)
+}
+
 variable "machine_type" {
   type        = string
   description = "VM Instance machine_type"

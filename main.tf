@@ -56,6 +56,7 @@ module "vms" {
   dbuser         = module.sql-instance-database[each.value.database_instance].username
   dbpassword     = module.sql-instance-database[each.value.database_instance].password
   email          = module.service_accounts[each.value.account_id].email 
+  scopes         = each.value.sa_scopes
 }
 
 module "dns_zone" {
