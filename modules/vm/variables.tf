@@ -3,6 +3,9 @@ variable "name" {
   type        = string
   description = "Name of VM Instance"
 }
+variable "email" {
+  type = string
+}
 
 variable "machine_type" {
   type        = string

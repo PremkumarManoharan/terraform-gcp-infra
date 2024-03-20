@@ -67,6 +67,7 @@ variable "vms" {
     network_tier      = string
     database_instance = string
     database_name     = string
+    account_id        = string
   }))
 }
 
@@ -91,4 +92,31 @@ variable "sql_instance" {
         })
   }))
   description = "Deatils of SQL Instance"
+}
+
+
+variable "dns_zone_records" {
+   type            = list(object({
+    dns_zone_name  = string
+    domain_name    = string
+    record_type    = string
+    record_ttl     = number
+    instance_name  = string
+   }))
+}
+
+variable "service_accounts" {
+  type = list(object({
+    account_id = string
+    display_name = string
+  }))
+}
+
+variable "project_role_bindings" {
+  type = list(object({
+     project  = string 
+     role     = string
+     userType = string
+     account_id = string
+  }))
 }
