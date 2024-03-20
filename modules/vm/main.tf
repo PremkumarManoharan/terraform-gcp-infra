@@ -5,6 +5,7 @@ resource "google_compute_instance" "webapp" {
   machine_type = var.machine_type
   zone         = var.zone
   tags         = var.tags
+  allow_stopping_for_update = true
 
   boot_disk {
     initialize_params {
@@ -37,9 +38,14 @@ metadata_startup_script = <<-EOF
   fi
 EOF
 
-
+  service_account {
+    # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.(which is done below)
+    email  = var.email
+    scopes = ["cloud-platform"]
+  }
   
 }
+
 
 data "google_compute_image" "my_image" {
   family  = var.family
