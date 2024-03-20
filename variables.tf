@@ -68,6 +68,7 @@ variable "vms" {
     database_instance = string
     database_name     = string
     account_id        = string
+    sa_scopes         = list(string)
   }))
 }
 
