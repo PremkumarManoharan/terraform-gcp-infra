@@ -121,3 +121,44 @@ variable "project_role_bindings" {
      account_id = string
   }))
 }
+
+variable "vpc_connectors" {
+  type = list(object({
+    name = string
+    subnet = string
+  }))
+}
+
+variable "cloud_functions" {
+  type = list(object({
+    name                            = string
+    account_id                      = string
+    topic                           = string
+    database_instance               = string
+    vpc_connector_name                   = string
+    location                        = string
+    runtime                         = string
+    entry_point                     = string
+    bucket                          = string
+    object                          = string
+    SENDGRID_API_KEY                = string
+    PG_DB                           = string
+    max_instance_count              = number
+    min_instance_count              = number
+    available_memory                = string
+    available_cpu                   = string
+    timeout_seconds                 = number
+    ingress_settings                = string
+    all_traffic_on_latest_revision  = bool        
+    event_type                      = string
+    retry_policy                    = string
+    vpc_connector_egress_settings   = string
+  }))
+}
+
+variable "pub_sub_topics" {
+  type = list(object({
+    name = string
+    message_retention_duration = string
+  }))
+}
