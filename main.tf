@@ -57,6 +57,7 @@ module "vms" {
   dbpassword     = module.sql-instance-database[each.value.database_instance].password
   email          = module.service_accounts[each.value.account_id].email 
   scopes         = each.value.sa_scopes
+  pubsubtopic    = each.value.pubsubtopic
 }
 
 module "dns_zone" {
@@ -111,4 +112,5 @@ module "cloud-function-serverless" {
   pubsub_topic                    = module.pub-sub[each.value.topic].topicId
   retry_policy                    = each.value.retry_policy
   vpc_connector_egress_settings   = each.value.vpc_connector_egress_settings
+  generation                      = each.value.generation 
 }

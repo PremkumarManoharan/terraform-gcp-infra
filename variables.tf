@@ -68,6 +68,7 @@ variable "vms" {
     database_instance = string
     database_name     = string
     account_id        = string
+    pubsubtopic       = string
     sa_scopes         = list(string)
   }))
 }
@@ -154,6 +155,7 @@ variable "cloud_functions" {
     event_type                     = string
     retry_policy                   = string
     vpc_connector_egress_settings  = string
+    generation                     = string
   }))
 }
 

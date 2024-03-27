@@ -33,6 +33,7 @@ metadata_startup_script = <<-EOF
     PG_USER=${var.dbuser}
     PG_PASSWORD=${var.dbpassword}
     PG_DB=${var.database}
+    TOPIC_EMAIL=${var.pubsubtopic}
   EOL
     touch /opt/app/start.txt
   fi
