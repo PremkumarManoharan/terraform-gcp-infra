@@ -60,13 +60,17 @@ variable "dbhostname" {
 }
 variable "dbpassword" {
   type        = string
-  description = "DB hostname for private connection"
+  description = "DB password for private connection"
 }
 variable "dbuser" {
   type        = string
-  description = "DB hostname for private connection"
+  description = "DB username for private connection"
 }
 variable "database" {
   type        = string
-  description = "DB hostname for private connection"
+  description = "DB name for private connection"
+}
+variable "pubsubtopic" {
+  type        = string
+  description = "Topic name to publish message to send email"
 }

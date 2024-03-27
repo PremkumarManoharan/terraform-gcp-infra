@@ -7,8 +7,9 @@ resource "google_cloudfunctions2_function" "cloud_functions" {
     entry_point = var.entry_point
     source {
       storage_source {
-        bucket = var.bucket
-        object = var.object
+        bucket     = var.bucket
+        object     = var.object
+        generation = var.generation
       }
     }
   }
