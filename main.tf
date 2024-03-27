@@ -105,7 +105,8 @@ module "cloud-function-serverless" {
   timeout_seconds                 = each.value.timeout_seconds
   ingress_settings                = each.value.ingress_settings
   all_traffic_on_latest_revision  = each.value.all_traffic_on_latest_revision
-  service_account_email           = module.service_accounts[each.value.account_id].email 
+  service_account_email_pubsub    = module.service_accounts[each.value.account_id_pubsub].email 
+  service_account_email_functions = module.service_accounts[each.value.account_id_function].email 
   event_type                      = each.value.event_type
   pubsub_topic                    = module.pub-sub[each.value.topic].topicId
   retry_policy                    = each.value.retry_policy

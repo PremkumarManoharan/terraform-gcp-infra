@@ -31,7 +31,7 @@ variable "vpcs" {
       priority      = number
       direction     = string
       source_ranges = set(string)
-      target_tags = set(string)
+      target_tags   = set(string)
       allow = list(object({
         protocol = string
         ports    = list(string)
@@ -42,14 +42,14 @@ variable "vpcs" {
       }))
     }))
     psconnect = object({
-    name         = string
-    address_type = string
-    purpose      = string
-    prefix_length      = number
+      name          = string
+      address_type  = string
+      purpose       = string
+      prefix_length = number
     })
     private_vpc_connection_service = string
   }))
-  
+
 }
 
 
@@ -74,91 +74,92 @@ variable "vms" {
 
 
 variable "sql_instance" {
-  type        = list(object({
-    sql_instance_name      = string
-    database_version       = string
-    tier                   = string
-    availability_type      = string
-    disk_size              = number
-    disk_type              = string
-    ipv4_enabled           = bool
-    vpc_name               = string
-    edition                = string
+  type = list(object({
+    sql_instance_name           = string
+    database_version            = string
+    tier                        = string
+    availability_type           = string
+    disk_size                   = number
+    disk_type                   = string
+    ipv4_enabled                = bool
+    vpc_name                    = string
+    edition                     = string
     deletion_protection_enabled = bool
-    database               = object({
-            name = string
-            username = string
-            password_length = number
-            password_special = bool
-        })
+    database = object({
+      name             = string
+      username         = string
+      password_length  = number
+      password_special = bool
+    })
   }))
   description = "Deatils of SQL Instance"
 }
 
 
 variable "dns_zone_records" {
-   type            = list(object({
-    dns_zone_name  = string
-    domain_name    = string
-    record_type    = string
-    record_ttl     = number
-    instance_name  = string
-   }))
+  type = list(object({
+    dns_zone_name = string
+    domain_name   = string
+    record_type   = string
+    record_ttl    = number
+    instance_name = string
+  }))
 }
 
 variable "service_accounts" {
   type = list(object({
-    account_id = string
+    account_id   = string
     display_name = string
   }))
 }
 
 variable "project_role_bindings" {
   type = list(object({
-     project  = string 
-     role     = string
-     userType = string
-     account_id = string
+    project    = string
+    role       = string
+    userType   = string
+    account_id = string
   }))
 }
 
 variable "vpc_connectors" {
   type = list(object({
-    name = string
+    name   = string
     subnet = string
   }))
 }
 
 variable "cloud_functions" {
   type = list(object({
-    name                            = string
-    account_id                      = string
-    topic                           = string
-    database_instance               = string
-    vpc_connector_name                   = string
-    location                        = string
-    runtime                         = string
-    entry_point                     = string
-    bucket                          = string
-    object                          = string
-    SENDGRID_API_KEY                = string
-    PG_DB                           = string
-    max_instance_count              = number
-    min_instance_count              = number
-    available_memory                = string
-    available_cpu                   = string
-    timeout_seconds                 = number
-    ingress_settings                = string
-    all_traffic_on_latest_revision  = bool        
-    event_type                      = string
-    retry_policy                    = string
-    vpc_connector_egress_settings   = string
+    name                           = string
+    account_id_pubsub              = string
+    account_id_function            = string
+    topic                          = string
+    database_instance              = string
+    vpc_connector_name             = string
+    location                       = string
+    runtime                        = string
+    entry_point                    = string
+    bucket                         = string
+    object                         = string
+    SENDGRID_API_KEY               = string
+    PG_DB                          = string
+    max_instance_count             = number
+    min_instance_count             = number
+    available_memory               = string
+    available_cpu                  = string
+    timeout_seconds                = number
+    ingress_settings               = string
+    all_traffic_on_latest_revision = bool
+    event_type                     = string
+    retry_policy                   = string
+    vpc_connector_egress_settings  = string
   }))
 }
 
 variable "pub_sub_topics" {
   type = list(object({
-    name = string
+    name                       = string
     message_retention_duration = string
   }))
 }
