@@ -55,9 +55,6 @@ variable "ingress_settings" {
 variable "all_traffic_on_latest_revision" {
   type= bool
 }
-variable "service_account_email" {
-  type= string
-}
 variable "event_type" {
   type= string
 }
@@ -68,5 +65,11 @@ variable "retry_policy" {
   type= string
 }
 variable "vpc_connector_egress_settings" {
+  type= string
+}
+variable "service_account_email_functions" {
+  type= string
+}
+variable "service_account_email_pubsub" {
   type= string
 }

@@ -29,13 +29,14 @@ resource "google_cloudfunctions2_function" "cloud_functions" {
     timeout_seconds                = var.timeout_seconds 
     ingress_settings               = var.ingress_settings
     all_traffic_on_latest_revision = var.all_traffic_on_latest_revision
-    service_account_email          = var.service_account_email
     vpc_connector_egress_settings  = var.vpc_connector_egress_settings
+    service_account_email          = var.service_account_email_functions
   }
 
   event_trigger {
-    event_type     = var.event_type
-    pubsub_topic   = var.pubsub_topic
-    retry_policy   = var.retry_policy
+    event_type               = var.event_type
+    pubsub_topic             = var.pubsub_topic
+    retry_policy             = var.retry_policy
+    service_account_email          = var.service_account_email_pubsub
   }
 }
