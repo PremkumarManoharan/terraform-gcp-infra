@@ -104,6 +104,7 @@ variable "dns_zone_records" {
     record_type   = string
     record_ttl    = number
     instance_name = string
+    load_balancer = string
   }))
 }
 
@@ -224,22 +225,23 @@ variable "instance-groups" {
 }
 
 variable "load-balancers" {
- type = list(object({
-   name = string
-   project = string
-   backend_port= number
-   backend_port_name = string
-   backend_protocol = string
-   backend_timeoout_sec = number
-   enable_cdn = bool
-   health_check_port = number
-   health_check_request_path = string
-   iap_config_enable = bool
-   log_config_enable = bool
-   managed_ssl_certificate_domains = list(string)
-   ssl = bool
-   vpc_network = string
-   target_tags = list(string)
-   http_forward = bool
- }))
+  type = list(object({
+    name                            = string
+    project                         = string
+    backend_port                    = number
+    backend_port_name               = string
+    backend_protocol                = string
+    backend_timeoout_sec            = number
+    enable_cdn                      = bool
+    health_check_port               = number
+    health_check_request_path       = string
+    iap_config_enable               = bool
+    log_config_enable               = bool
+    managed_ssl_certificate_domains = list(string)
+    ssl                             = bool
+    vpc_network                     = string
+    target_tags                     = list(string)
+    http_forward                    = bool
+    igm                             = string
+  }))
 }

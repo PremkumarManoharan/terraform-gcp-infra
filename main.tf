@@ -66,7 +66,7 @@ module "dns_zone" {
   source         = "./modules/dns"
   dns_zone_name  = each.value.dns_zone_name
   domain_name    = each.value.domain_name
-  record_rrdatas = [module.load-balancer["webapp-http-lb"].external_ip]
+  record_rrdatas = [module.load-balancer[each.value.load_balancer].external_ip]
   record_type    = each.value.record_type
   record_ttl     = each.value.record_ttl
 }
@@ -149,7 +149,7 @@ module "instance-group" {
 module "load-balancer" {
   for_each                        = { for s in toset(var.load-balancers) : s.name => s }
   source                          = "./modules/load-balancer"
-  backend-group                   = module.instance-group["webapp-igm"].mig
+  backend-group                   = module.instance-group[each.value.igm].mig
   name                            = each.value.name
   project                         = each.value.project
   backend_port                    = each.value.backend_port
@@ -163,7 +163,7 @@ module "load-balancer" {
   log_config_enable               = each.value.log_config_enable
   managed_ssl_certificate_domains = each.value.managed_ssl_certificate_domains
   ssl                             = each.value.ssl
-  firewall_networks = [module.vpcs[each.value.vpc_network].vpc.self_link]
-  target_tags = each.value.target_tags
-  http_forward = each.value.http_forward
+  firewall_networks               = [module.vpcs[each.value.vpc_network].vpc.self_link]
+  target_tags                     = each.value.target_tags
+  http_forward                    = each.value.http_forward
 }
