@@ -9,7 +9,7 @@ resource "google_cloudfunctions2_function" "cloud_functions" {
       storage_source {
         bucket     = var.bucket
         object     = var.object
-        generation = var.generation
+        # generation = var.generation
       }
     }
   }

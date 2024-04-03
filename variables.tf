@@ -165,3 +165,81 @@ variable "pub_sub_topics" {
     message_retention_duration = string
   }))
 }
+
+variable "instance_templates" {
+  type = list(object({
+    name               = string
+    description        = string
+    disk_size_gb       = number
+    tags               = list(string)
+    disk_type          = string
+    machine_type       = string
+    network_tier       = string
+    scopes             = list(string)
+    subnetwork         = string
+    database           = string
+    family             = string
+    family_project     = string
+    pubsubtopic        = string
+    vm_service_account = string
+    database_instance  = string
+  }))
+}
+
+variable "instance-groups" {
+  type = list(object({
+    instance_template = string
+    autoscaling = object({
+      name                             = string
+      max_replicas                     = number
+      min_replicas                     = number
+      cooldown_period                  = number
+      cpu_util_target                  = number
+      max_scaled_in_replicas_fixed     = number
+      scale_in_control_time_window_sec = number
+    })
+    http-health-check = object({
+      name                = string
+      description         = string
+      timeout_sec         = number
+      check_interval_sec  = number
+      healthy_threshold   = number
+      unhealthy_threshold = number
+      port_name           = string
+      port                = number
+      request_path        = string
+
+    })
+    igm = object({
+      name                      = string
+      base_instance_name        = string
+      version_name              = string
+      port_name                 = string
+      port                      = number
+      initial_delay_sec         = number
+      force_update_on_repair    = string
+      default_action_on_failure = string
+    })
+  }))
+}
+
+variable "load-balancers" {
+ type = list(object({
+   name = string
+   project = string
+   backend_port= number
+   backend_port_name = string
+   backend_protocol = string
+   backend_timeoout_sec = number
+   enable_cdn = bool
+   health_check_port = number
+   health_check_request_path = string
+   iap_config_enable = bool
+   log_config_enable = bool
+   managed_ssl_certificate_domains = list(string)
+   ssl = bool
+   vpc_network = string
+   target_tags = list(string)
+   http_forward = bool
+ }))
+}
