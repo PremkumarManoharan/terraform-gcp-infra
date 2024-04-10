@@ -49,3 +49,9 @@ variable "family" {
 variable "family_project" {
   type = string
 }
+variable "kms_key_self_link" {
+  type = string
+}
+variable "kms_key_service_account" {
+  type = string
+}

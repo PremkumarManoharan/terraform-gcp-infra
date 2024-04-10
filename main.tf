@@ -14,11 +14,13 @@ module "vpcs" {
 
 
 module "sql-instance-database" {
-  for_each        = { for s in toset(var.sql_instance) : s.sql_instance_name => s }
-  depends_on      = [module.vpcs]
-  source          = "./modules/sql-instance"
-  sql_instance    = each.value
-  private_network = module.vpcs[each.value.vpc_name].vpc.self_link
+  for_each            = { for s in toset(var.sql_instance) : s.sql_instance_name => s }
+  depends_on          = [module.vpcs, google_kms_crypto_key_iam_binding.crypto_key]
+  source              = "./modules/sql-instance"
+  sql_instance        = each.value
+  private_network     = module.vpcs[each.value.vpc_name].vpc.self_link
+  encryption_key_name = google_kms_crypto_key.example-key.id
+  #encryption_key_name = module.kms-key-ring[each.value.key_name].ksm_key_id
 }
 
 module "service_accounts" {
@@ -112,12 +114,12 @@ module "cloud-function-serverless" {
   pubsub_topic                    = module.pub-sub[each.value.topic].topicId
   retry_policy                    = each.value.retry_policy
   vpc_connector_egress_settings   = each.value.vpc_connector_egress_settings
-  generation                      = each.value.generation
 }
 
 module "instance-template" {
   for_each       = { for s in toset(var.instance_templates) : s.name => s }
   source         = "./modules/instance-template"
+  depends_on     = [google_kms_crypto_key_iam_binding.crypto_key]
   name           = each.value.name
   description    = each.value.description
   disk_size_gb   = each.value.disk_size_gb
@@ -135,7 +137,9 @@ module "instance-template" {
   family         = each.value.family
   family_project = each.value.family_project
   pubsubtopic    = each.value.pubsubtopic
-
+  #kms_key_self_link = module.kms-key-ring[each.value.key_name].ksm_key_id
+  kms_key_self_link       = google_kms_crypto_key.example-key.id
+  kms_key_service_account = module.service_accounts[each.value.vm_service_account].self_link
 }
 
 module "instance-group" {
@@ -166,4 +170,76 @@ module "load-balancer" {
   firewall_networks               = [module.vpcs[each.value.vpc_network].vpc.self_link]
   target_tags                     = each.value.target_tags
   http_forward                    = each.value.http_forward
+}
+
+
+locals {
+  file_hashes = { for path in var.source_files : path => filesha256(path) }
+}
+resource "null_resource" "prepare_files" {
+  for_each = local.file_hashes
+  triggers = {
+    path = each.key
+    hash = each.value
+  }
+  provisioner "local-exec" {
+    command = <<EOT
+    mkdir -p temp_dir
+    echo "Copying ${each.key} to temp_dir/"
+    cp "${each.key}" temp_dir/
+    EOT
+  }
+}
+
+data "archive_file" "example" {
+  depends_on = [null_resource.prepare_files]
+
+  type        = "zip"
+  source_dir  = "${path.module}/temp_dir/"
+  output_path = "${path.module}/serverless.zip"
+}
+
+
+resource "google_kms_crypto_key_iam_binding" "crypto_key" {
+  crypto_key_id = google_kms_crypto_key.example-key.id
+  role          = var.kms_iam_binding.role
+  members = var.kms_iam_binding.members
+}
+
+
+resource "random_id" "key_ring_suffix" {
+  byte_length = 4
+}
+resource "google_kms_key_ring" "keyring" {
+  name = "${var.keyring.key_ring_name}-${random_id.key_ring_suffix.hex}"
+  location = var.keyring.location
+}
+resource "google_kms_crypto_key" "example-key" {
+  name            = var.keyring.key_name
+  key_ring        = google_kms_key_ring.keyring.id
+  rotation_period = var.keyring.rotation_period
+}
+
+module "secret_keyring_name" {
+  source = "./modules/secrets"
+  secret_id = var.keyring.key_ring_name
+  secret_data = "${var.keyring.key_ring_name}-${random_id.key_ring_suffix.hex}"
+}
+
+
+resource "google_storage_bucket" "static" {
+  depends_on    = [google_kms_crypto_key_iam_binding.crypto_key]
+  name          = var.storage_bucket.name
+  location      = var.storage_bucket.location
+  storage_class = var.storage_bucket.storage_class
+  encryption {
+    default_kms_key_name = google_kms_crypto_key.example-key.id
+  }
+}
+resource "google_storage_bucket_object" "default" {
+  depends_on   = [data.archive_file.example]
+  name         = var.storage_bucket_object.name
+  source       = var.storage_bucket_object.source
+  content_type = var.storage_bucket_object.content_type
+  bucket       = google_storage_bucket.static.id
 }

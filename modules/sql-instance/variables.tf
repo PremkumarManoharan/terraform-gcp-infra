@@ -24,3 +24,7 @@ variable "sql_instance" {
 variable "private_network" {
   type = string
 }
+
+variable "encryption_key_name" {
+  type = string
+}

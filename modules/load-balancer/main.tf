@@ -8,8 +8,10 @@ module "gce-lb-http" {
   target_tags       = var.target_tags
   ssl               = var.ssl
   http_forward      = var.http_forward
+
   managed_ssl_certificate_domains = var.managed_ssl_certificate_domains
   backends = {
+    
     default = {
       port                            = var.backend_port
       protocol                        = var.backend_protocol
