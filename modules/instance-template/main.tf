@@ -6,10 +6,20 @@ resource "google_compute_region_instance_template" "instance-template" {
   machine_type         = var.machine_type
 
   disk {
+    source_image_encryption_key {
+      kms_key_service_account = var.kms_key_service_account
+      kms_key_self_link       = var.kms_key_self_link
+    }
+    source_snapshot_encryption_key{
+      kms_key_self_link = var.kms_key_self_link
+      kms_key_service_account = var.kms_key_service_account
+    }
     source_image      = data.google_compute_image.my_image.self_link
     disk_type         = var.disk_type
     disk_size_gb      = var.disk_size_gb
-
+    disk_encryption_key {
+      kms_key_self_link = var.kms_key_self_link
+    }
   }
 
   network_interface {

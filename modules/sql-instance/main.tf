@@ -5,7 +5,7 @@ resource "random_id" "db_name_suffix" {
 resource "google_sql_database_instance" "instance" {
   name             = "${var.sql_instance.sql_instance_name}-${random_id.db_name_suffix.hex}"
   database_version = var.sql_instance.database_version
-
+  encryption_key_name = var.encryption_key_name
   settings {
     tier = var.sql_instance.tier
     edition = var.sql_instance.edition
@@ -37,4 +37,16 @@ resource "google_sql_user" "users-1" {
   name     = var.sql_instance.database.username
   instance = google_sql_database_instance.instance.name
   password = random_password.password.result
+}
+
+module "secret_dbhostname" {
+  source = "../secrets"
+  secret_id = "dbhostname"
+  secret_data = google_sql_database_instance.instance.private_ip_address
+}
+
+module "secret_dbpassword" {
+  source = "../secrets"
+  secret_id = "dbpassword"
+  secret_data = google_sql_user.users-1.password
 }

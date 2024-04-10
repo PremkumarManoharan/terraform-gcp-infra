@@ -86,6 +86,7 @@ variable "sql_instance" {
     vpc_name                    = string
     edition                     = string
     deletion_protection_enabled = bool
+    key_name                    = string
     database = object({
       name             = string
       username         = string
@@ -156,7 +157,6 @@ variable "cloud_functions" {
     event_type                     = string
     retry_policy                   = string
     vpc_connector_egress_settings  = string
-    generation                     = string
   }))
 }
 
@@ -184,6 +184,7 @@ variable "instance_templates" {
     pubsubtopic        = string
     vm_service_account = string
     database_instance  = string
+    key_name           = string
   }))
 }
 
@@ -244,4 +245,40 @@ variable "load-balancers" {
     http_forward                    = bool
     igm                             = string
   }))
+}
+variable "source_files" {
+  type = list(string)
+}
+
+
+variable "kms_iam_binding" {
+  type = object({
+    role = string
+    members = list(string)
+  })
+}
+
+variable "keyring" {
+  type = object({
+    key_ring_name = string
+    location   =string
+    key_name  = string
+    rotation_period = string
+  })
+}
+
+variable "storage_bucket" {
+  type = object({
+    name = string
+    location = string
+    storage_class = string
+  })
+}
+
+variable "storage_bucket_object" {
+  type = object({
+    name         = string
+    source       = string
+    content_type = string
+  })
 }
