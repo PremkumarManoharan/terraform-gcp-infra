@@ -44,13 +44,7 @@ jobs:
     
     - name: Terraform Validate
       run: terraform validate
-    
-    - name: Load Environment Specific Terraform Vars
-      id: load_tf_vars
-      run: |
-        echo "TF_VARS=$(echo '${{ secrets[format('TF_VARS_{0}', github.event.inputs.environment)] }}')" >> $GITHUB_ENV
+
 
     - name: Terraform Apply
-      run: terraform apply -var-file=${{ env.TF_VARS }} -auto-approve
-      env:
-        TF_VARS: ${{ secrets[format('TF_VARS_{0}', github.event.inputs.environment)] }}
+      run: terraform apply -var-file=${{ secrets[format('TF_VARS_{0}', github.event.inputs.environment)] }} -auto-approve
