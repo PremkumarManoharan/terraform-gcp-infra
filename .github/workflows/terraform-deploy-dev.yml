@@ -34,7 +34,7 @@ jobs:
     - name: 'Google Auth'
       uses: 'google-github-actions/auth@v2'
       with:
-        credentials_json: ${{ secrets[format('{0}_GCP_CREDENTIALS', github.event.inputs.environment)] }}
+        credentials_json: ${{ secrets.DEV_GCP_CREDENTIALS}}
 
   
     - name: 'Set up Cloud SDK'
