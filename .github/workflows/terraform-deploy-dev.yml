@@ -2,6 +2,10 @@ name: Apply Terraform
 run-name: "Apply Terraform"
 
 on:
+  pull_request:
+    types: [opened,synchronize]
+    branches:
+      - 'main'
   workflow_dispatch:
     inputs:
       environment:
@@ -47,7 +51,9 @@ jobs:
     
     - name: Write secret to file
       run: |
-        echo "${{ secrets.TF_VARS_DEV }}" > DEV.tfvars
+        echo "$TF_VAR" > DEV.tfvars
+      env:
+        TF_VAR: ${{ secrets.TF_VARS_DEV }}
 
     - name: Terraform Apply
       run: terraform apply -var-file=DEV.tfvars -auto-approve
