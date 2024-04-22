@@ -1,0 +1,56 @@
+name: Apply Terraform
+run-name: "Apply Terraform"
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        required: true
+        type: choice
+        description: ''
+        options:
+          - DEV
+          - STAGING
+          - PROD
+
+jobs:
+  deploy-infra-dev:
+    name: Validate-terraform
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 1.7.x
+    
+    - name: 'Google Auth'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: ${{ secrets[format('{0}_GCP_CREDENTIALS', github.event.inputs.environment)] }}
+
+  
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v2'
+
+    - name: 'Use gcloud CLI'
+      run: 'gcloud info'
+
+    - name: Terraform Init
+      run: terraform init    
+    
+    - name: Terraform Validate
+      run: terraform validate
+    
+    - name: Load Environment Specific Terraform Vars
+      id: load_tf_vars
+      run: |
+        echo "TF_VARS=$(echo '${{ secrets[format('TF_VARS_{0}', github.event.inputs.environment)] }}')" >> $GITHUB_ENV
+
+    - name: Terraform Apply
+      run: terraform apply -var-file=${{ env.TF_VARS }} -auto-approve
+      env:
+        TF_VARS: ${{ secrets[format('TF_VARS_{0}', github.event.inputs.environment)] }}
