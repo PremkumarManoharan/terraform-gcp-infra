@@ -46,8 +46,10 @@ jobs:
       run: terraform validate
     
     - name: Write Terraform Variables to File
+      env:
+        TF_VAR: ${{ secrets[format('TF_VARS_{0}', github.event.inputs.environment)] }}
       run: |
-        echo "${{ secrets[format('TF_VARS_{0}', github.event.inputs.environment)] }}" > "${{github.event.inputs.environment}}.tfvars"
+        echo "TF_VAR='${TF_VAR}'" > "${{ github.event.inputs.environment }}.tfvars"
       shell: bash
 
     - name: Terraform Apply
