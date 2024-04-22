@@ -173,31 +173,31 @@ module "load-balancer" {
 }
 
 
-locals {
-  file_hashes = { for path in var.source_files : path => filesha256(path) }
-}
-resource "null_resource" "prepare_files" {
-  for_each = local.file_hashes
-  triggers = {
-    path = each.key
-    hash = each.value
-  }
-  provisioner "local-exec" {
-    command = <<EOT
-    mkdir -p temp_dir
-    echo "Copying ${each.key} to temp_dir/"
-    cp "${each.key}" temp_dir/
-    EOT
-  }
-}
+# locals {
+#   file_hashes = { for path in var.source_files : path => filesha256(path) }
+# }
+# resource "null_resource" "prepare_files" {
+#   for_each = local.file_hashes
+#   triggers = {
+#     path = each.key
+#     hash = each.value
+#   }
+#   provisioner "local-exec" {
+#     command = <<EOT
+#     mkdir -p temp_dir
+#     echo "Copying ${each.key} to temp_dir/"
+#     cp "${each.key}" temp_dir/
+#     EOT
+#   }
+# }
 
-data "archive_file" "example" {
-  depends_on = [null_resource.prepare_files]
+# data "archive_file" "example" {
+#   depends_on = [null_resource.prepare_files]
 
-  type        = "zip"
-  source_dir  = "${path.module}/temp_dir/"
-  output_path = "${path.module}/serverless.zip"
-}
+#   type        = "zip"
+#   source_dir  = "${path.module}/temp_dir/"
+#   output_path = "${path.module}/serverless.zip"
+# }
 
 
 resource "google_kms_crypto_key_iam_binding" "crypto_key" {
@@ -237,7 +237,6 @@ resource "google_storage_bucket" "static" {
   }
 }
 resource "google_storage_bucket_object" "default" {
-  depends_on   = [data.archive_file.example]
   name         = var.storage_bucket_object.name
   source       = var.storage_bucket_object.source
   content_type = var.storage_bucket_object.content_type
