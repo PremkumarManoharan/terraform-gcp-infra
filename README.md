@@ -1,91 +1,101 @@
-# Terraform VPC Module for Google Cloud
+# Project Overview
 
-This Terraform module provisions resources in Google Cloud Platform (GCP).
+This project encompasses a multi-component architecture that leverages various Google Cloud Platform (GCP) services to deploy a robust web application. The system integrates continuous deployment, infrastructure as code, and serverless functions to ensure scalability, security, and efficient development workflows.
 
-## Prerequisites
 
-Before you begin, ensure you have the following prerequisites satisfied:
+![Architecture Diagram](infra.png)
 
-- Terraform installed on your local machine. [Download Terraform](https://www.terraform.io/downloads.html)
-- An active GCP account with an existing project.
-- Google Cloud SDK installed and initialized on your machine. [Install Google Cloud SDK](https://cloud.google.com/sdk)
-- Adequate permissions within your GCP project to create and manage VPCs, subnets, and routing.
+## Repositories Overview
 
-## Configuration Details
+The project is divided into several repositories, each handling a specific segment of the architecture:
 
-Create Terraform configurations defined within a `terraform.tfvars` file. Below is an example of the expected structure:(fill appropiate values in the below tfvars)
+- **Webapp**: Contains the code for the REST API web application. It uses GitHub Actions to automate the continuous deployment process, which includes building an VM Image using Packer on Google Cloud VMs. The resulting image is used to refresh the instance group through a new instance template.
 
-```hcl
-region = ""
-project_name = ""
+- **Terraform-IAC**: Manages the infrastructure setup and modifications using Terraform as the infrastructure as code tool. It ensures infrastructure versioning and repeatability.
 
-vpcs = [ 
-  {
-    vpc_name = ""
-    vpc_auto_create_subnetworks = false
-    vpc_routing_mode = ""
-    vpc_delete_default_routes_on_create = true
-    subnets = [ 
-      {
-        name          = ""
-        ip_cidr_range = ""
-      },
-      {
-        name          = ""
-        ip_cidr_range = ""
-      },
-    ]
-    routes = [ 
-      {
-        name             = ""
-        dest_range       = ""
-        next_hop_gateway = ""
-      } 
-    ]
-  }
-]
-```
-# Usage Instructions
+- **Serverless**: Hosts the JavaScript function code for a Google Cloud Function that sends verification emails to users upon registration.
 
-To use this Terraform module for deploying resources to Google Cloud Platform, please follow the steps below:
+## Infrastructure Components
 
-1. **Clone the repository**: Clone this repository to your local machine using your preferred Git client.
+### Network and Security
 
-    ```
-    git clone <repository-url>
-    ```
+### Google Cloud Platform
 
-2. **Navigate to the directory**: Change into the directory where the repository has been cloned.
+- **Cloud DNS**: Manages the domain's DNS settings and points the A record to the Load Balancer IP.
+- **HTTPS Proxy & Cloud Load Balancing**: Directs user requests to the appropriate resources while handling SSL termination for secure HTTPS traffic.
+- **VPC with Firewall (webapp-subnet)**: A secure virtual network with firewall rules that host the application resources.
+- **Instance Group & Compute Engine**: A group of virtual machine instances that serve the web application, equipped with auto-scaling and multi-zone deployment for high availability.
+- **Private Service Connect**: Enables private connectivity to GCP services.
+- **Cloud SQL (PostgreSQL)**: Fully-managed database service that hosts the application's data securely within a private network.
 
-    ```
-    cd <cloned-repository-directory>
-    ```
+### Continuous Integration / Continuous Deployment (CI/CD)
 
-3. **Initialize Terraform**: Run the following command to initialize the Terraform environment, which will download the necessary plugins and modules.
+- **Integration Tests**: Automated tests that run to ensure the application behaves as expected after changes.
+- **Packer Build**: Builds immutable images based on the application code and dependencies for reliable deployments.
 
-    ```
-    terraform init
-    ```
+### Security and Monitoring
 
-4. **Plan your deployment**: Execute the following command to review the changes that Terraform plans to make to your infrastructure.
+- **Unprivileged Service Account**: A least-privilege account used by the CI/CD pipeline to enhance security.
+- **Logging & Log Analytics**: Collects and analyzes logs to monitor the health and security of the application.
 
-    ```
-    terraform plan
-    ```
+### Serverless and Event-Driven Architecture
 
-5. **Apply the changes**: Apply the changes to your GCP project by running:
+- **VPC Connector**: Connects serverless products to the VPC network.
+- **Pub/Sub**: A messaging service for event-driven systems which decouples services that produce events from services that process them.
+- **Cloud Functions**: Lightweight compute solution for creating event-driven applications and connects to the Pub/Sub for processing events.
+- **Email Sender**: An example serverless function that triggers sending emails in response to specific events.
 
-    ```
-    terraform apply
-    ```
+## Deployment Strategy
 
-## APIs Required
+- **Rolling Updates**: The application is updated with zero downtime by gradually replacing instances with new ones.
+  
+- **Domain Name**: Acquired through Hostinger.
+- **DNS and SSL**: A public DNS zone hosted on Google Cloud with an A record pointing to a Load Balancer IP. SSL certificates are managed by Google Cloud.
+- **VPC Configuration**: Includes a public subnet, all hosted within the US-East1 region. VMs are placed in a public subnet. Con
 
-Ensure that the following Google Cloud APIs are enabled for your project:
+### Compute and Storage
 
-- **Compute Engine API (`compute.googleapis.com`)**: Required for managing Virtual Private Clouds (VPCs), subnets, and routes.
+- **Instance Group**: Utilizes a custom AMI and supports autoscaling and health checks. The group is deployed across three zones in the US-East1 region to ensure high availability.
+- **SQL Database**: An SQL DB instance is deployed within Google's VPC and is accessible from the VMs via VPC peering.
+- **Bucket Storage**: A dedicated bucket is used for storing serverless artifacts.
+- **Encryption**: A customer-managed key stored in a key ring is used to encrypt the disks of VMs, the SQL instance, and the bucket.
 
-You can enable these APIs in the GCP Console or by using the `gcloud` command:
+### Event-Driven Components
 
-```sh
-gcloud services enable compute.googleapis.com
+- **Google Cloud Pub/Sub**: Facilitates the communication between the webapp and the serverless function. When the `/v1/user` endpoint is hit, a message is posted to a Pub/Sub queue, which then triggers the email verification function.
+- **Google Cloud Function**: Responsible for sending an email verification to users. The email includes a link that expires in 2 minutes.
+
+## Setup and Deployment Instructions
+
+### Prerequisites
+
+1. Google Cloud Platform account.
+2. Configured gcloud CLI and Terraform on your local machine.
+3. Access to a Namecheap account for domain management.
+
+### Configuration Steps
+
+1. **Clone the Repositories**: Each component of the project has its own repository. Ensure you clone each repository:
+   - `git clone <webapp-repo-url>`
+   - `git clone <terraform-IAC-repo-url>`
+   - `git clone <serverless-repo-url>`
+
+2. **Set Up Infrastructure**: Navigate to the Terraform-IAC repository and initialize the Terraform configuration:
+ - `cd Terraform-IAC`
+ - `terraform init`
+ - `terraform apply`
+
+3. **Deploy the Webapp**: Follow the continuous deployment setup in the Webapp repository to link GitHub Actions with your GCP account.
+
+4. **Configure and Deploy Serverless Functions**: Use the instructions in the Serverless repository to deploy the functions via Google Cloud Functions.
+
+### Monitoring and Management
+
+Utilize Google Cloud's monitoring tools to track application performance and health. Set up alerts for critical performance metrics and system anomalies.
+
+## Support and Contributions
+
+For support, please open an issue in the respective repository. Contributions are welcome through pull requests. Ensure that you follow the contribution guidelines specified in each repository.
+
+---
+This README serves as an overview guide to setting up and understanding the project's infrastructure and components. For detailed setup instructions or troubleshooting, refer to the documentation within each repository.
